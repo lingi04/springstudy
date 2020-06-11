@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="BeanB" class="com.springstudy.demo.beans.sample.BeanB">
+        <property name="name" value="JH"/>
+        <property name="age" value="31"/>
+    </bean>
+</beans>
