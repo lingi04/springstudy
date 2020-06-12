@@ -2,22 +2,25 @@ package com.springstudy.demo.mvc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 @Slf4j
-@Component
+//@Component
 public class CustomHandlerAdapter implements HandlerAdapter {
     public CustomHandlerAdapter(){
         log.info("=======================================");
         log.info("= CustomHandlerAdapter is Initialized =");
         log.info("=======================================");
     }
+
     /**
      * 이 핸들러어댑터가 지원하는 핸들러(컨트롤러) 타입인지 확인한다.
      * @param handler
@@ -25,7 +28,9 @@ public class CustomHandlerAdapter implements HandlerAdapter {
      */
     @Override
     public boolean supports(Object handler) {
-        log.info("CustomHandlerAdapter is called");
+        log.info("CustomHandlerAdapter is called - supports : {}", handler instanceof Controller);
+//        return (handler instanceof HandlerMethod);
+        // && supportsInternal((HandlerMethod) handler));
         return (handler instanceof Controller);
     }
 
@@ -42,6 +47,8 @@ public class CustomHandlerAdapter implements HandlerAdapter {
     @Nullable
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
+
+        Method m = ReflectionUtils.findMethod(handler.getClass(), "class", Map.class, Map.class);
 
         return ((Controller) handler).handleRequest(request, response);
     }
