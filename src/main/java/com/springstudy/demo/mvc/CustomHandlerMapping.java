@@ -12,6 +12,7 @@ import java.util.List;
 @Component
 public class CustomHandlerMapping extends AbstractDetectingUrlHandlerMapping {
     public CustomHandlerMapping(){
+        this.setOrder(this.HIGHEST_PRECEDENCE);
         logger.info("=======================================");
         logger.info("= CustomHandlerMapping is Initialized =");
         logger.info("=======================================");
@@ -33,5 +34,7 @@ public class CustomHandlerMapping extends AbstractDetectingUrlHandlerMapping {
         }
         return StringUtils.toStringArray(urls);
     }
+
+
 
 }

@@ -3,9 +3,10 @@ package com.springstudy.demo.mvc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @Component
 public class CustomHandlerAdapter implements HandlerAdapter {
-    public CustomHandlerAdapter(){
+    private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+
+    public CustomHandlerAdapter(RequestMappingHandlerAdapter requestMappingHandlerAdapter){
+        this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
+
         log.info("=======================================");
         log.info("= CustomHandlerAdapter is Initialized =");
         log.info("=======================================");
@@ -25,8 +30,9 @@ public class CustomHandlerAdapter implements HandlerAdapter {
      */
     @Override
     public boolean supports(Object handler) {
-        log.info("CustomHandlerAdapter is called");
-        return (handler instanceof Controller);
+        log.info("CustomHandlerAdapter is called -supports : {}", ((HandlerMethod) handler).getBean() instanceof ExampleController);
+
+        return (((HandlerMethod) handler).getBean() instanceof ExampleController);
     }
 
     /**
@@ -43,7 +49,28 @@ public class CustomHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
 
-        return ((Controller) handler).handleRequest(request, response);
+//        Method m = ReflectionUtils.findMethod(ExampleController.class, "control", Map.class, Map.class);
+//        RequiredParams requiredParams = AnnotationUtils.getAnnotation(m, RequiredParams.class);
+//
+//        Map<String, String> params = new HashMap<>();
+//        for(String param : requiredParams.value()){
+//            String value = request.getParameter(param);
+//            if(value == null){
+//                throw new IllegalStateException();
+//            }
+//            params.put(param, value);
+//        }
+//
+//        Map<String, Object> model = new HashMap<>();
+//        model.put("param",params);
+//        model.put("thisIsAddedParamInCustomHandler","이게되네");
+//
+//        SimpleController simpleController = (SimpleController)(((HandlerMethod) handler).getBean());
+//        simpleController.control(params, model);
+//        return new ModelAndView("test", model);
+
+        // Bean 등록할 때 WebApplicationContext
+        return requestMappingHandlerAdapter.handle(request, response, handler);
     }
 
     /**
