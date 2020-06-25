@@ -16,23 +16,38 @@ import javax.servlet.http.HttpServletResponse;
 public class CustomHandlerAdapter implements HandlerAdapter {
     private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
-    public CustomHandlerAdapter(RequestMappingHandlerAdapter requestMappingHandlerAdapter){
+    public CustomHandlerAdapter(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
         this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
 
         log.info("=======================================");
         log.info("= CustomHandlerAdapter is Initialized =");
         log.info("=======================================");
     }
+
     /**
      * 이 핸들러어댑터가 지원하는 핸들러(컨트롤러) 타입인지 확인한다.
+     *
      * @param handler
      * @return
      */
     @Override
     public boolean supports(Object handler) {
-        log.info("CustomHandlerAdapter is called -supports : {}", ((HandlerMethod) handler).getBean() instanceof ExampleController);
 
-        return (((HandlerMethod) handler).getBean() instanceof ExampleController);
+        if (handler instanceof HandlerMethod) {
+            try {
+                ((HandlerMethod) handler).getBeanType().getAnnotation(CustomRestController.class);
+
+                boolean isSupports = ((HandlerMethod) handler).getBean() instanceof ExampleController;
+
+                log.info("CustomHandlerAdapter is called -supports : {}", isSupports);
+
+                return isSupports;
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -48,27 +63,7 @@ public class CustomHandlerAdapter implements HandlerAdapter {
     @Nullable
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
-
-//        Method m = ReflectionUtils.findMethod(ExampleController.class, "control", Map.class, Map.class);
-//        RequiredParams requiredParams = AnnotationUtils.getAnnotation(m, RequiredParams.class);
-//
-//        Map<String, String> params = new HashMap<>();
-//        for(String param : requiredParams.value()){
-//            String value = request.getParameter(param);
-//            if(value == null){
-//                throw new IllegalStateException();
-//            }
-//            params.put(param, value);
-//        }
-//
-//        Map<String, Object> model = new HashMap<>();
-//        model.put("param",params);
-//        model.put("thisIsAddedParamInCustomHandler","이게되네");
-//
-//        SimpleController simpleController = (SimpleController)(((HandlerMethod) handler).getBean());
-//        simpleController.control(params, model);
-//        return new ModelAndView("test", model);
-
+        log.info("Executed through CustomHandlerAdapter");
         // Bean 등록할 때 WebApplicationContext
         return requestMappingHandlerAdapter.handle(request, response, handler);
     }

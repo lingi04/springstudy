@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ExampleController {
     @GetMapping
     public String hello(){
-        log.info("hello is called");
+        log.info("Custom controller adapter is called");
         return "Custom controller adapter is called";
     }
 }

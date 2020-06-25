@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExistingController {
     @GetMapping
     public String hello(){
-        log.info("existing controller adapter test");
+        log.info("Existing controller adapter test");
 
-        return "existing controller adapter is called";
+        return "Existing controller adapter is called";
     }
 }
